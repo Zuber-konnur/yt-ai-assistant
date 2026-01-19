@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube AI Voice Assistant",
+  "version": "1.0",
+  "description": "Voice-controlled AI assistant for YouTube",
+  "permissions": ["activeTab"],
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "http://localhost:8000/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["content.js"],
+      "css": ["style.css"]
+    }
+  ]
+}
