@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "YouTube AI Voice Assistant",
   "version": "1.0",
-  "description": "Voice-controlled AI assistant for YouTube",
+  "description": "Context-aware AI voice assistant for YouTube with wake word and real-time interaction.",
   "permissions": ["activeTab"],
   "host_permissions": [
     "https://www.youtube.com/*",

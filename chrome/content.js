@@ -1,7 +1,7 @@
 if (!window.ytAIAssistantLoaded) {
   window.ytAIAssistantLoaded = true;
 
-  const SESSION_ID = crypto.randomUUID();
+  const SESSION_ID = crypto.randomUUID(); // Kept for schema compatibility
   let assistantActive = false;
   let isListening = false;
 
@@ -87,43 +87,49 @@ if (!window.ytAIAssistantLoaded) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           command: text,
-          session_id: SESSION_ID
+          session_id: SESSION_ID // Backend will ignore this now
         })
       });
 
       const data = await res.json();
       hideStatus();
 
-      if (data.response) speak(data.response);
+      // Consolidated all speech logic into executeIntent
       executeIntent(data);
 
     } catch (err) {
-      speak("Backend is not available");
+      speak("Backend is not available"); // Single error response
       showStatus("Backend error");
     }
   }
 
   /* ===============================
-     EXECUTE INTENT
+     EXECUTE INTENT (One Command, One Response)
   =============================== */
   function executeIntent(data) {
     const video = getVideo();
 
+    // 1. Navigation intents - Speak before redirecting
     if (data.intent === "play" && data.video_id) {
+      speak(data.response);
       window.location.href = `https://www.youtube.com/watch?v=${data.video_id}`;
       return;
     }
 
     if (data.intent === "search" && data.query) {
+      speak(data.response);
       window.location.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(data.query)}`;
       return;
     }
 
-    if (!video && ["pause", "resume", "skip", "rewind"].includes(data.intent)) {
+    // 2. Media validation - Speak error if video is required but missing
+    const mediaIntents = ["pause", "resume", "skip", "rewind", "mute", "unmute", "volume_up", "volume_down"];
+    if (!video && mediaIntents.includes(data.intent)) {
       speak("No video is currently playing");
       return;
     }
 
+    // 3. Execution Logic
     switch (data.intent) {
       case "pause": video.pause(); break;
       case "resume": video.play(); break;
@@ -141,21 +147,21 @@ if (!window.ytAIAssistantLoaded) {
       case "speak_only":
       default: break;
     }
+
+    // 4. Final Response - Speak if not handled by navigation or error
+    if (data.response) {
+      speak(data.response);
+    }
   }
 
   /* ===============================
-     VOICE RECOGNITION + CONTINUOUS WAKE WORD
+     VOICE RECOGNITION
   =============================== */
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-  // if (!SpeechRecognition) {
-  //   showStatus("Speech recognition not supported");
-  //   return;
-  // }
-
   const recognition = new SpeechRecognition();
   recognition.lang = "en-US";
-  recognition.continuous = false; // Must be false to auto-restart
+  recognition.continuous = false;
   recognition.interimResults = false;
 
   function startListening() {
@@ -172,7 +178,6 @@ if (!window.ytAIAssistantLoaded) {
     const text = event.results[0][0].transcript.toLowerCase().trim();
     console.log("[JARVIS] Heard:", text);
 
-    // Wake word
     if (!assistantActive && text.includes("hey jarvis")) {
       assistantActive = true;
       speak("Yes, I'm listening");
@@ -180,7 +185,6 @@ if (!window.ytAIAssistantLoaded) {
       return;
     }
 
-    // Turn off
     if (assistantActive && text.includes("off assistant")) {
       assistantActive = false;
       speak("Assistant turned off");
@@ -200,15 +204,12 @@ if (!window.ytAIAssistantLoaded) {
 
   recognition.onend = () => {
     if (isListening) {
-      setTimeout(startListening, 150); // auto-restart for continuous listening
+      setTimeout(startListening, 150);
     } else {
       showStatus("Assistant stopped");
     }
   };
 
-  /* ===============================
-     BUTTON CONTROL
-  =============================== */
   btn.onclick = () => {
     isListening = !isListening;
 

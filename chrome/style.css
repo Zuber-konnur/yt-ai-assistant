@@ -7,8 +7,8 @@
 }
 
 #yt-ai-btn {
-  width: 60px;
-  height: 60px;
+  width: 64px;
+  height: 64px;
   background: #ff0000;
   color: white;
   border-radius: 50%;
@@ -17,17 +17,17 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.4);
 }
 
 #yt-ai-status {
-  margin-top: 8px;
+  margin-top: 10px;
   background: #111;
-  color: white;
-  padding: 6px 10px;
-  border-radius: 8px;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 12px;
   font-size: 12px;
   text-align: center;
+  max-width: 240px;
   display: none;
-  max-width: 180px;
 }
