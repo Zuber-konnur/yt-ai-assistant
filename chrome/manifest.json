@@ -3,11 +3,12 @@
   "name": "YouTube AI Voice Assistant",
   "version": "1.0",
   "description": "Context-aware AI voice assistant for YouTube with wake word and real-time interaction.",
-  "permissions": ["activeTab"],
+  "permissions": ["activeTab", "storage"],
   "host_permissions": [
     "https://www.youtube.com/*",
     "http://localhost:8000/*"
   ],
+
   "content_scripts": [
     {
       "matches": ["https://www.youtube.com/*"],

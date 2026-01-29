@@ -14,6 +14,9 @@ def rule_based_fallback(text: str):
             return "volume_up"
         if any(w in text for w in ["down", "decrease", "lower", "quieter"]):
             return "volume_down"
+        
+    if any(k in text for k in ["fullscreen", "full screen", "maximize"]):
+        return "fullscreen"
 
     # -------- NAVIGATION --------
     if "home" in text:
